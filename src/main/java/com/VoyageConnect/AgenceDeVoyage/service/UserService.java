@@ -24,6 +24,12 @@ public class UserService {
 
 	@Autowired
     private  PasswordEncoder passwordEncoder;
+	
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+	
+	
 
 	public void registerUser(String username, String password, String roleName) {
 	    Optional<User> existingUser = userRepository.findByUsername(username);

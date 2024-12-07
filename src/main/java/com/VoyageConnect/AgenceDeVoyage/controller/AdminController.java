@@ -3,11 +3,14 @@ package com.VoyageConnect.AgenceDeVoyage.controller;
 import com.VoyageConnect.AgenceDeVoyage.entity.Destination;
 import com.VoyageConnect.AgenceDeVoyage.entity.Offer;
 import com.VoyageConnect.AgenceDeVoyage.entity.Reservation;
+import com.VoyageConnect.AgenceDeVoyage.entity.User;
 import com.VoyageConnect.AgenceDeVoyage.repository.DestinationRepository;
 import com.VoyageConnect.AgenceDeVoyage.repository.OfferRepository;
 import com.VoyageConnect.AgenceDeVoyage.service.DestinationService;
 import com.VoyageConnect.AgenceDeVoyage.service.OfferService;
 import com.VoyageConnect.AgenceDeVoyage.service.ReservationService;
+import com.VoyageConnect.AgenceDeVoyage.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +31,9 @@ public class AdminController {
 
     @Autowired
     private ReservationService reservationService;
+    
+    @Autowired
+    private UserService userService;
     
     
 
@@ -153,12 +159,39 @@ public class AdminController {
     // Reservation CRUD
     @PostMapping("/reservation")
     public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservation) {
-        if (!offerService.getOfferById(reservation.getOffer().getId()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null); // Offer must exist
+        // Check if the Offer ID is provided and valid
+        if (reservation.getOffer() == null || reservation.getOffer().getId() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(reservationService.saveReservation(reservation));
+
+        // Fetch the offer from the database
+        Optional<Offer> offer = offerService.getOfferById(reservation.getOffer().getId());
+        if (!offer.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        reservation.setOffer(offer.get());
+
+        // Check if the user ID is provided in the request
+        if (reservation.getUser() == null || reservation.getUser().getId() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        // Fetch the user from the database using the provided user ID
+        Optional<User> user = userService.getUserById(reservation.getUser().getId());
+        if (!user.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        reservation.setUser(user.get());
+
+        // Save the reservation and return the response
+        Reservation savedReservation = reservationService.saveReservation(reservation);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedReservation);
     }
+
+
+
 
     @GetMapping("/reservations")
     public List<Reservation> getAllReservations() {
@@ -175,14 +208,35 @@ public class AdminController {
 
     @PutMapping("/reservation/{id}")
     public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody Reservation reservation) {
+        // Check if the reservation exists in the database
         if (!reservationService.getReservationById(id).isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        if (!offerService.getOfferById(reservation.getOffer().getId()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null); // Offer must exist
+
+        // Check if the offer ID is valid and fetch the full offer with related entities
+        if (reservation.getOffer() == null || reservation.getOffer().getId() == null || !offerService.getOfferById(reservation.getOffer().getId()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Offer must exist
         }
+
+        // Fetch the full Offer to ensure all relationships are loaded (e.g., Destination)
+        Optional<Offer> offer = offerService.getOfferById(reservation.getOffer().getId());
+        if (!offer.isPresent() || offer.get().getDestination() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Offer must have a valid destination
+        }
+
+        // Check if the user ID is valid
+        if (reservation.getUser() == null || reservation.getUser().getId() == null || !userService.getUserById(reservation.getUser().getId()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // User must exist
+        }
+
+        // Set the offer and user to the reservation
+        reservation.setOffer(offer.get());
+        reservation.setUser(userService.getUserById(reservation.getUser().getId()).get());
+
+        // Set the ID of the reservation for the update
         reservation.setId(id);
+
+        // Save and return the updated reservation
         return ResponseEntity.ok(reservationService.saveReservation(reservation));
     }
 
