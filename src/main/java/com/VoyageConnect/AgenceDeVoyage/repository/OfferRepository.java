@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OfferRepository extends JpaRepository<Offer, Long> {
+    boolean existsByDestinationId(Long destinationId);  // Custom method to check if offers exist for a destination
 }

@@ -15,9 +15,10 @@ public class Offer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "destination_id", nullable = false)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinColumn(name = "destination_id",nullable = false)
     private Destination destination;
+
 
     @Column(nullable = false)
     private String offerDetails;
@@ -30,4 +31,42 @@ public class Offer {
         this.offerDetails = offerDetails;
         this.offerPrice = offerPrice;
     }
+
+	public Offer() {
+		super();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Destination getDestination() {
+		return destination;
+	}
+
+	public void setDestination(Destination destination) {
+		this.destination = destination;
+	}
+
+	public String getOfferDetails() {
+		return offerDetails;
+	}
+
+	public void setOfferDetails(String offerDetails) {
+		this.offerDetails = offerDetails;
+	}
+
+	public Double getOfferPrice() {
+		return offerPrice;
+	}
+
+	public void setOfferPrice(Double offerPrice) {
+		this.offerPrice = offerPrice;
+	}
+    
+	
 }

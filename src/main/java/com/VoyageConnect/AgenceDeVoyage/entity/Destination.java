@@ -23,9 +23,6 @@ public class Destination {
 
     @Column(nullable = false)
     private String description;
-
-    @Column(nullable = false)
-    private Double price;
     
     
 
@@ -33,11 +30,10 @@ public class Destination {
 		super();
 	}
 
-	public Destination(String name, String country, String description, Double price) {
+	public Destination(String name, String country, String description) {
         this.name = name;
         this.country = country;
         this.description = description;
-        this.price = price;
     }
 
 	public Long getId() {
@@ -72,12 +68,5 @@ public class Destination {
 		this.description = description;
 	}
 
-	public Double getPrice() {
-		return price;
-	}
-
-	public void setPrice(Double price) {
-		this.price = price;
-	}
     
 }

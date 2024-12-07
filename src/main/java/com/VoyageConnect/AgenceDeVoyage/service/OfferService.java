@@ -29,4 +29,8 @@ public class OfferService {
     public void deleteOffer(Long id) {
         offerRepository.deleteById(id);
     }
+    // Check if any offers exist for a specific destination
+    public boolean hasOffersForDestination(Long destinationId) {
+        return offerRepository.existsByDestinationId(destinationId);
+    }
 }

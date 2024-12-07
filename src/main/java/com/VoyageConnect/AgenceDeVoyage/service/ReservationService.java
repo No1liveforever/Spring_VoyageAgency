@@ -29,4 +29,8 @@ public class ReservationService {
     public void deleteReservation(Long id) {
         reservationRepository.deleteById(id);
     }
+    // Check if any reservations exist for a specific offer
+    public boolean hasReservationsForOffer(Long offerId) {
+        return reservationRepository.existsByOfferId(offerId);
+    }
 }

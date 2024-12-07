@@ -19,23 +19,22 @@ public class Reservation {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "offer_id", nullable = false)
     private Offer offer;
 
     @Column(nullable = false)
     private String reservationDate;
-    
 
-    public Reservation() {
-		super();
-	}
-
-	public Reservation(User user, Offer offer, String reservationDate) {
+    public Reservation(User user, Offer offer, String reservationDate) {
         this.user = user;
         this.offer = offer;
         this.reservationDate = reservationDate;
     }
+
+	public Reservation() {
+		super();
+	}
 
 	public Long getId() {
 		return id;
@@ -68,6 +67,5 @@ public class Reservation {
 	public void setReservationDate(String reservationDate) {
 		this.reservationDate = reservationDate;
 	}
-	
-	
+    
 }
