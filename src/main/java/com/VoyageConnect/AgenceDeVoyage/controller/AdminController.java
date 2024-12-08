@@ -1,12 +1,16 @@
 package com.VoyageConnect.AgenceDeVoyage.controller;
 
 import com.VoyageConnect.AgenceDeVoyage.entity.Destination;
+import com.VoyageConnect.AgenceDeVoyage.entity.Flight;
+import com.VoyageConnect.AgenceDeVoyage.entity.Hotel;
 import com.VoyageConnect.AgenceDeVoyage.entity.Offer;
 import com.VoyageConnect.AgenceDeVoyage.entity.Reservation;
 import com.VoyageConnect.AgenceDeVoyage.entity.User;
 import com.VoyageConnect.AgenceDeVoyage.repository.DestinationRepository;
 import com.VoyageConnect.AgenceDeVoyage.repository.OfferRepository;
 import com.VoyageConnect.AgenceDeVoyage.service.DestinationService;
+import com.VoyageConnect.AgenceDeVoyage.service.FlightService;
+import com.VoyageConnect.AgenceDeVoyage.service.HotelService;
 import com.VoyageConnect.AgenceDeVoyage.service.OfferService;
 import com.VoyageConnect.AgenceDeVoyage.service.ReservationService;
 import com.VoyageConnect.AgenceDeVoyage.service.UserService;
@@ -34,6 +38,12 @@ public class AdminController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private FlightService flightService;
+    
+    @Autowired
+    private HotelService hotelService;
     
     
 
@@ -88,6 +98,17 @@ public class AdminController {
 
         // Set the actual Destination object in the Offer
         offer.setDestination(destination.get());
+        
+     // Optional: Check for flights or hotels and associate them as needed.
+        if (offer.getFlight() != null && !flightService.getFlightById(offer.getFlight().getId()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null); // Flight not found
+        }
+
+        if (offer.getHotel() != null && !hotelService.getHotelById(offer.getHotel().getId()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null); // Hotel not found
+        }
 
         // Save the offer and return the response
         Offer savedOffer = offerService.saveOffer(offer);
@@ -248,6 +269,44 @@ public class AdminController {
         reservationService.deleteReservation(id);
         return ResponseEntity.ok("Reservation with ID " + id + " has been deleted.");
     }
+    
+ // Add a flight to an offer
+    @PostMapping("/offer/{offerId}/flights")
+    public ResponseEntity<Flight> addFlightToOffer(@PathVariable Long offerId, @RequestBody Flight flight) {
+        Optional<Offer> offer = offerService.getOfferById(offerId);
+        if (offer.isPresent()) {
+            flight.setOffer(offer.get());
+            Flight savedFlight = flightService.saveFlight(flight);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedFlight);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    // Retrieve all flights for an offer
+    @GetMapping("/offer/{offerId}/flights")
+    public List<Flight> getFlightsForOffer(@PathVariable Long offerId) {
+        return flightService.getFlightsForOffer(offerId);
+    }
+    
+ // Add a hotel to an offer
+    @PostMapping("/offer/{offerId}/hotels")
+    public ResponseEntity<Hotel> addHotelToOffer(@PathVariable Long offerId, @RequestBody Hotel hotel) {
+        Optional<Offer> offer = offerService.getOfferById(offerId);
+        if (offer.isPresent()) {
+            hotel.setOffer(offer.get());	
+            Hotel savedHotel = hotelService.saveHotel(hotel);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedHotel);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    // Retrieve all hotels for an offer
+    @GetMapping("/offer/{offerId}/hotels")
+    public List<Hotel> getHotelsForOffer(@PathVariable Long offerId) {
+        return hotelService.getHotelsForOffer(offerId);
+    }
+
+
 
 
 }

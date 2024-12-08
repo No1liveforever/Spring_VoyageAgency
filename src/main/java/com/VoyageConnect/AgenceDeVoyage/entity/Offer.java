@@ -18,6 +18,14 @@ public class Offer {
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "destination_id",nullable = false)
     private Destination destination;
+    
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "flight_id", nullable = true)
+    private Flight flight;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "hotel_id", nullable = true)
+    private Hotel hotel;
 
 
     @Column(nullable = false)
@@ -26,11 +34,17 @@ public class Offer {
     @Column(nullable = false)
     private Double offerPrice;
 
-    public Offer(Destination destination, String offerDetails, Double offerPrice) {
-        this.destination = destination;
-        this.offerDetails = offerDetails;
-        this.offerPrice = offerPrice;
-    }
+
+
+	public Offer(Long id, Destination destination, Flight flight, Hotel hotel, String offerDetails, Double offerPrice) {
+		super();
+		this.id = id;
+		this.destination = destination;
+		this.flight = flight;
+		this.hotel = hotel;
+		this.offerDetails = offerDetails;
+		this.offerPrice = offerPrice;
+	}
 
 	public Offer() {
 		super();
@@ -67,6 +81,23 @@ public class Offer {
 	public void setOfferPrice(Double offerPrice) {
 		this.offerPrice = offerPrice;
 	}
+
+	public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+
+	public Hotel getHotel() {
+		return hotel;
+	}
+
+	public void setHotel(Hotel hotel) {
+		this.hotel = hotel;
+	}
+	
     
 	
 }
