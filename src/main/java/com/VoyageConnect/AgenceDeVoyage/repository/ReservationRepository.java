@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     boolean existsByOfferId(Long offerId);  // Custom method to check if reservations exist for an offer
+    long countByOfferId(Long offerId);
+
 }
