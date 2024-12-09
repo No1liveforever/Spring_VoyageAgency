@@ -16,22 +16,19 @@ import com.VoyageConnect.AgenceDeVoyage.service.OfferService;
 @RestController
 @RequestMapping("/api/search")
 public class SearchController {
-    @Autowired
-    private OfferService offerService;
+	@Autowired
+	private OfferService offerService;
 
-    @GetMapping
-    public ResponseEntity<List<Offer>> searchOffers(
-        @RequestParam(required = false) String country,
-        @RequestParam(required = false) Double minPrice,
-        @RequestParam(required = false) Double maxPrice
-    ) {
-        List<Offer> offers = offerService.searchOffers(country, minPrice, maxPrice);
-        return ResponseEntity.ok(offers);
-    }
+	@GetMapping
+	public ResponseEntity<List<Offer>> searchOffers(@RequestParam(required = false) String country,
+			@RequestParam(required = false) Double minPrice, @RequestParam(required = false) Double maxPrice) {
+		List<Offer> offers = offerService.searchOffers(country, minPrice, maxPrice);
+		return ResponseEntity.ok(offers);
+	}
 
-    @GetMapping("/availability/{offerId}")
-    public ResponseEntity<Boolean> checkOfferAvailability(@PathVariable Long offerId) {
-        boolean isAvailable = offerService.checkAvailability(offerId);
-        return ResponseEntity.ok(isAvailable);
-    }
+	@GetMapping("/availability/{offerId}")
+	public ResponseEntity<Boolean> checkOfferAvailability(@PathVariable Long offerId) {
+		boolean isAvailable = offerService.checkAvailability(offerId);
+		return ResponseEntity.ok(isAvailable);
+	}
 }

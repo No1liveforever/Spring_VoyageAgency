@@ -1,98 +1,67 @@
-package com.VoyageConnect.AgenceDeVoyage.entity;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+package com.VoyageConnect.AgenceDeVoyage.Dtos;
 
-import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@Entity
-@Table(name = "hotels")
-public class Hotel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@AllArgsConstructor
+public class HotelDTO {
     private Long id;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String location;
-
-    @Column(nullable = false)
     private Integer stars;
-
-    @Column(nullable = false)
     private Double pricePerNight;
-
-    @ManyToOne
-    @JoinColumn(name = "offer_id", nullable = false)
-    private Offer offer;
-
-	public Hotel(Long id, String name, String location, Integer stars, Double pricePerNight, Offer offer) {
+    private Long offerId; // Avoid direct Offer reference
+    
+	public HotelDTO(Long id, String name, String location, Integer stars, Double pricePerNight, Long offerId) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.location = location;
 		this.stars = stars;
 		this.pricePerNight = pricePerNight;
-		this.offer = offer;
+		this.offerId = offerId;
 	}
-
-	public Hotel() {
+	public HotelDTO() {
 		super();
 	}
-
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
-
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	public String getLocation() {
 		return location;
 	}
-
 	public void setLocation(String location) {
 		this.location = location;
 	}
-
 	public Integer getStars() {
 		return stars;
 	}
-
 	public void setStars(Integer stars) {
 		this.stars = stars;
 	}
-
 	public Double getPricePerNight() {
 		return pricePerNight;
 	}
-
 	public void setPricePerNight(Double pricePerNight) {
 		this.pricePerNight = pricePerNight;
 	}
-
-	public Offer getOffer() {
-		return offer;
+	public Long getOfferId() {
+		return offerId;
 	}
-
-	public void setOffer(Offer offer) {
-		this.offer = offer;
+	public void setOfferId(Long offerId) {
+		this.offerId = offerId;
 	}
     
     

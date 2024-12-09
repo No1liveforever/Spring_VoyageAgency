@@ -1,5 +1,7 @@
 package com.VoyageConnect.AgenceDeVoyage.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,11 +21,12 @@ public class Offer {
     @JoinColumn(name = "destination_id",nullable = false)
     private Destination destination;
     
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "flight_id", nullable = true)
+    @OneToOne
+    @JoinColumn(name = "flight_id", referencedColumnName = "id")
     private Flight flight;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+
+    @OneToOne
     @JoinColumn(name = "hotel_id", nullable = true)
     private Hotel hotel;
 
@@ -33,8 +36,6 @@ public class Offer {
 
     @Column(nullable = false)
     private Double offerPrice;
-
-
 
 	public Offer(Long id, Destination destination, Flight flight, Hotel hotel, String offerDetails, Double offerPrice) {
 		super();
