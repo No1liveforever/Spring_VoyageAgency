@@ -1,6 +1,11 @@
 package com.VoyageConnect.AgenceDeVoyage.controller;
 
 import com.VoyageConnect.AgenceDeVoyage.service.UserService;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,9 +19,13 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public String register(@RequestParam String username, @RequestParam String password, @RequestParam String role) {
+	public ResponseEntity<Map<String, String>> register(@RequestParam String username, @RequestParam String password, @RequestParam String role) {
 		userService.registerUser(username, password, role);
-		return "User registered successfully!";
+		 Map<String, String> response = new HashMap<>();
+		    response.put("message", "User registered successfully!");
+
+		    // Return a JSON response with status 200
+		    return ResponseEntity.ok(response);
 	}
 
 	// Login will be handled by Spring Security (no need to explicitly define it

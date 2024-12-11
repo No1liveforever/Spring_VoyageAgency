@@ -23,9 +23,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
     private final CustomUserDetailsService customUserDetailsService;
 
@@ -46,6 +48,16 @@ public class SecurityConfig {
             http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
         return authenticationManagerBuilder.build();
+    }
+    
+    // Configure CORS settings
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:4200")  // Allow frontend origin
+                .allowedMethods("GET", "POST", "PUT", "DELETE")  // Allow necessary HTTP methods
+                .allowedHeaders("*")  // Allow all headers
+                .allowCredentials(true);  // Allow credentials (cookies, headers)
     }
 
 

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@RestController
+@RestController //rest kayred json donc atkhdem bfrawework flfront , controller nishan kayred html atkhdem bih b thymleaf
 @RequestMapping("/admin")
 public class AdminController {
 
